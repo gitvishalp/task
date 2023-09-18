@@ -20,6 +20,8 @@ public class UpdateTaskRequest implements Serializable {
 	private String priority;
 	@JsonProperty("ExpectedCompletion")
 	private Date expectedDate;
+	@JsonProperty("Status")
+	private String status;
 	@JsonProperty("Remarks")
 	private String remarks;
 	

@@ -269,6 +269,7 @@ public class AdminServiceImpl implements AdminService {
 		}
 		Optional<Priority> priority = priorityRepository.findByCode(request.getPriority());
 		task.get().setPriority(priority.get());
+		task.get().setStatus(request.getStatus());
 		task.get().setExpectedCompletionDate(request.getExpectedDate());
 		task.get().setRemarks(request.getRemarks());
 		taskRepository.save(task.get());
