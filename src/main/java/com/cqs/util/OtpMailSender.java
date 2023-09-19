@@ -24,10 +24,10 @@ public class OtpMailSender implements Serializable {
 		    MimeMessageHelper helper = new MimeMessageHelper(message);
 		    helper.setFrom("noreply@cqs.in");
 		    helper.setTo(senderEmail);
-		    String subject = "Invite- CQS task workbench!!";
-		    String content = "<p>Hi! " + senderEmail + "</p>"
-		            + "<p>We are delighted to inform you that you added in CQS Task workbench as a " + "<b>" + role +"</b>" 
-		    		+ "<br>Use this registerd email as a username and this temporary password to log into your account"
+		    String subject = "Invite- CQS task workbench";
+		    String content = "<p>Hi " + senderEmail + "</p>"
+		            + "<p>We are delighted to inform you that CQS Admin added you in CQS Task workbench as a " + "<b>" + role +"</b>" 
+		    		+ "<br>Use your registerd email as a username and this temporary password to log into your account"
 		            + "<br>Your Temporary Password is:</p>"
 		            + "<p><b> " + "<font face=\"Verdana\" size =\"5\" color=\"green\" >"  + tempPass + "</font></b></p>"
 		            + "<p><b> Don't shere it with anyone!! </b></p>" 
