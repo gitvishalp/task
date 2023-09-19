@@ -120,10 +120,11 @@ public class AdminServiceImpl implements AdminService {
 		emp.setRole(role.get());
 		emp.setCreatedAt(new Date());
 		String tempPass = generateOtp.generateCode();
-		emp.setPassword(tempPass);
+		emp.setPassword(passwordEncoder.encode(tempPass).trim());
 		emp.setCreatedBy(admin.get().getId());
+		emp.setFirstLogin(true);
 		employeeRepository.save(emp);
-		otpMailSender.sendInviteMail(request.getEmail(),tempPass,role.get().getName());
+		otpMailSender.sendInviteMail(request.getEmail(),request.getName(),tempPass,role.get().getName());
 		return new Response<>(HttpStatus.SC_OK,"Success");
 	}
 
@@ -239,6 +240,7 @@ public class AdminServiceImpl implements AdminService {
 		task.setCreatedAt(new Date());
 		task.setExpectedCompletionDate(request.getExpectedDate());
 		task.setCreatedby(admin.get().getId());
+		task.setRemarks("-");
 		project.get().setStatus(Constants.INPROGRESS);
 		project.get().setActiveTasks(project.get().getActiveTasks()+1);
 		employee.get().setActiveTasks(employee.get().getActiveTasks()+1);

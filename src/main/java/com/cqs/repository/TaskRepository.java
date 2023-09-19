@@ -23,6 +23,9 @@ public interface TaskRepository extends JpaRepository<Task, String>{
 	@Query("SELECT COUNT(id) FROM Task t WHERE t.status = ?1" )
 	int countTaskByStatus(String status);
 	
+	@Query("SELECT COUNT(id) FROM Task t WHERE t.status = ?1 AND t.assignee.id = ?2 ")
+	int countTaskByStatusAndEmpId(String status,String empId);
+	
 	@Modifying
 	@Query("DELETE FROM Task t WHERE t.project.id = ?1 ")
 	int deleteByProjectId(String projectId);

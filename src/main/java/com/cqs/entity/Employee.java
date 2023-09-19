@@ -47,6 +47,8 @@ public class Employee implements Serializable {
 	private int activeTasks;
 	@Column(columnDefinition = ColumnDefinition.BIT)
 	private boolean isActive;
+	@Column(columnDefinition = ColumnDefinition.BIT)
+	private boolean firstLogin;
 	@CreationTimestamp
 	private Date createdAt;
 	private String createdBy;

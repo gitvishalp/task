@@ -18,14 +18,14 @@ public class OtpMailSender implements Serializable {
 	private static final long serialVersionUID = -7669658508063258406L;
 	private final JavaMailSender mailSender;
 	
-	public String sendInviteMail(String senderEmail, String tempPass,String role) throws UnsupportedEncodingException, MessagingException {
+	public String sendInviteMail(String senderEmail,String empName, String tempPass,String role) throws UnsupportedEncodingException, MessagingException {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();           
 		    MimeMessageHelper helper = new MimeMessageHelper(message);
 		    helper.setFrom("noreply@cqs.in");
 		    helper.setTo(senderEmail);
 		    String subject = "Invite- CQS task workbench";
-		    String content = "<p>Hi " + senderEmail + "</p>"
+		    String content = "<p>Hi " + empName + "</p>"
 		            + "<p>We are delighted to inform you that CQS Admin added you in CQS Task workbench as a " + "<b>" + role +"</b>" 
 		    		+ "<br>Use your registerd email as a username and this temporary password to log into your account"
 		            + "<br>Your Temporary Password is:</p>"
