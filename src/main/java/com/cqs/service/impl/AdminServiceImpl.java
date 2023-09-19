@@ -1,5 +1,6 @@
 package com.cqs.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -36,7 +37,9 @@ import com.cqs.responsedto.Response;
 import com.cqs.service.AdminService;
 import com.cqs.util.GenerateOtp;
 import com.cqs.util.JWTTokenUtil;
+import com.cqs.util.OtpMailSender;
 
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -56,6 +59,7 @@ public class AdminServiceImpl implements AdminService {
 	private final PasswordEncoder passwordEncoder;
 	private final JWTTokenUtil jwtToken;
 	private final GenerateOtp generateOtp; 
+	private final OtpMailSender otpMailSender;
 	
 	@Override
 	public Response<LoginResponse> adminLogin(AdminLoginRequest request) {
@@ -82,7 +86,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Response<String> addEmployee(String adminId, AddEmployeeRequest request) {
+	public Response<String> addEmployee(String adminId, AddEmployeeRequest request) throws UnsupportedEncodingException, MessagingException {
 		Optional<Admin> admin = adminRepository.findById(adminId);
 		if(admin.isEmpty()) {
 			return new Response<>(HttpStatus.SC_FORBIDDEN,"Unauthorized");
@@ -119,6 +123,7 @@ public class AdminServiceImpl implements AdminService {
 		emp.setPassword(tempPass);
 		emp.setCreatedBy(admin.get().getId());
 		employeeRepository.save(emp);
+		otpMailSender.sendInviteMail(request.getEmail(),tempPass,role.get().getName());
 		return new Response<>(HttpStatus.SC_OK,"Success");
 	}
 

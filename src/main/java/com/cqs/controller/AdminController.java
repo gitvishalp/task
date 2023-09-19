@@ -1,6 +1,7 @@
 package com.cqs.controller;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.hc.core5.http.HttpHeaders;
@@ -31,6 +32,7 @@ import com.cqs.responsedto.Response;
 import com.cqs.service.AdminService;
 import com.cqs.util.JWTTokenUtil;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -50,7 +52,7 @@ public class AdminController implements Serializable {
 		return adminService.adminLogin(request);
 	}
 	@PostMapping("/AddEmployee")
-	Response<String> addEmployee(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@Valid @RequestBody AddEmployeeRequest request){
+	Response<String> addEmployee(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@Valid @RequestBody AddEmployeeRequest request) throws UnsupportedEncodingException, MessagingException{
 		return adminService.addEmployee(JWTTokenUtil.getUserIdFromToken(token.substring(7)), request);
 	}
     @PostMapping("/AddRole")	

@@ -18,35 +18,33 @@ public class OtpMailSender implements Serializable {
 	private static final long serialVersionUID = -7669658508063258406L;
 	private final JavaMailSender mailSender;
 	
-	public String sendMail(String senderEmail, String Otp) throws UnsupportedEncodingException, MessagingException {
+	public String sendInviteMail(String senderEmail, String tempPass,String role) throws UnsupportedEncodingException, MessagingException {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();           
 		    MimeMessageHelper helper = new MimeMessageHelper(message);
-		    helper.setFrom("noreply@likebook");
+		    helper.setFrom("noreply@cqs.in");
 		    helper.setTo(senderEmail);
-		     
-		    String subject = "LikeBook- One Time Password (OTP)";
-		     
-		    String content = "<p>Hello " + senderEmail + "</p>"
-		            + "<p>We are happy that you are going to use LikeBook."
-		            + "<br>Your One Time Password is:</p>"
-		            + "<p><b> " + "<font face=\"Verdana\" size =\"5\" color=\"green\" >"  + Otp + "</font></b></p>"
+		    String subject = "Invite- CQS task workbench!!";
+		    String content = "<p>Hi! " + senderEmail + "</p>"
+		            + "<p>We are delighted to inform you that you added in CQS Task workbench as a " + "<b>" + role +"</b>" 
+		    		+ "<br>Use this registerd email as a username and this temporary password to log into your account"
+		            + "<br>Your Temporary Password is:</p>"
+		            + "<p><b> " + "<font face=\"Verdana\" size =\"5\" color=\"green\" >"  + tempPass + "</font></b></p>"
 		            + "<p><b> Don't shere it with anyone!! </b></p>" 
-		            + "<p><font color=\"red\"> Note: this OTP is set to expire in 5 minutes. </font></p>"
+		            + "<p><font color=\"red\"> Note: this password will not be active anymore after your first login. </font></p>"
 		            + "<br>"
-		            + "<b>Team LikeBook<b>";
+		            + "<b>Team CQS<b>";
 		    helper.setSubject(subject);
 		    helper.setText(content, true);
 		    mailSender.send(message); 
-			return "OTP Sent";
+			return "Invite Sent";
 		}catch(Exception ex) {
 			return ex.toString();
 		}
-		
 	}
 	
 	
-	public String sendCode(String senderEmail, String code) throws UnsupportedEncodingException, MessagingException {
+	public String sendTaskMail(String senderEmail, String code) throws UnsupportedEncodingException, MessagingException {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();           
 		    MimeMessageHelper helper = new MimeMessageHelper(message);

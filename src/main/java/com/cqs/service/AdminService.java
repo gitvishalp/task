@@ -1,6 +1,7 @@
 package com.cqs.service;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.cqs.entity.Employee;
@@ -16,12 +17,14 @@ import com.cqs.requestdto.UpdateTaskRequest;
 import com.cqs.responsedto.LoginResponse;
 import com.cqs.responsedto.Response;
 
+import jakarta.mail.MessagingException;
+
 public interface AdminService extends Serializable {
 	
 	Response<LoginResponse> adminLogin(AdminLoginRequest request);
 	Response<String> addRole(String adminId, AddRoleRequest request);
 	Response<String> addDesignition(String adminId, AddDesignationRequest request);
-	Response<String> addEmployee(String adminId,AddEmployeeRequest request);
+	Response<String> addEmployee(String adminId,AddEmployeeRequest request) throws UnsupportedEncodingException, MessagingException;
 	Response<String> addProject(String adminId, AddProjectRequest request);
 	Response<String> addTask(String adminId, AddTaskRequest request);
 	Response<String> updateTask(String adminId,String taskId, UpdateTaskRequest request);
