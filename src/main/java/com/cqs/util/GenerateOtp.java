@@ -14,11 +14,12 @@ public class GenerateOtp implements Serializable {
 	private static final long serialVersionUID = -4795029445307728434L;
 	
 	private final static Integer LENGTH = 4;
-    private final static int n= 6;
+    private final static int n= 12;
 	public String generateCode() {
 		 // choose a Character random from this String
 		  String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		         + "0123456789"
+				 + "$&@%"
 		         + "abcdefghijklmnopqrstuvxyz";
 		  // create StringBuffer size of AlphaNumericString
 		  StringBuilder sb = new StringBuilder(n);

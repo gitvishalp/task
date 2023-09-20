@@ -20,6 +20,7 @@ public class OtpMailSender implements Serializable {
 	
 	public String sendInviteMail(String senderEmail,String empName, String tempPass,String role) throws UnsupportedEncodingException, MessagingException {
 		try {
+			String redirectUrl = "http://localhost:4200/login";
 			MimeMessage message = mailSender.createMimeMessage();           
 		    MimeMessageHelper helper = new MimeMessageHelper(message);
 		    helper.setFrom("noreply@cqs.in");
@@ -30,7 +31,8 @@ public class OtpMailSender implements Serializable {
 		    		+ "<br>Use your registerd email as a username and this temporary password to log into your account"
 		            + "<br>Your Temporary Password is:</p>"
 		            + "<p><b> " + "<font face=\"Verdana\" size =\"5\" color=\"green\" >"  + tempPass + "</font></b></p>"
-		            + "<p><b> Don't shere it with anyone!! </b></p>" 
+		            + "<br><p>Go through this link to login :"+ redirectUrl  +"</p>"
+		            + "<p><b> Don't share it with anyone!! </b></p>" 
 		            + "<p><font color=\"red\"> Note: this password will not be active anymore after your first login. </font></p>"
 		            + "<br>"
 		            + "<b>Team CQS<b>";

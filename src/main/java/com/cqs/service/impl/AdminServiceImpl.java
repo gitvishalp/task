@@ -124,7 +124,8 @@ public class AdminServiceImpl implements AdminService {
 		emp.setCreatedBy(admin.get().getId());
 		emp.setFirstLogin(true);
 		employeeRepository.save(emp);
-		otpMailSender.sendInviteMail(request.getEmail(),request.getName(),tempPass,role.get().getName());
+		System.out.println(tempPass);
+		//otpMailSender.sendInviteMail(request.getEmail(),request.getName(),tempPass,role.get().getName());
 		return new Response<>(HttpStatus.SC_OK,"Success");
 	}
 
