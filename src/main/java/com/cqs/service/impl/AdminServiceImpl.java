@@ -1,6 +1,7 @@
 package com.cqs.service.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -12,15 +13,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import com.cqs.constants.Constants;
 import com.cqs.entity.Admin;
+import com.cqs.entity.AdminNotifications;
 import com.cqs.entity.Designition;
 import com.cqs.entity.Employee;
+import com.cqs.entity.Notifications;
 import com.cqs.entity.Priority;
 import com.cqs.entity.Project;
 import com.cqs.entity.Roles;
 import com.cqs.entity.Task;
+import com.cqs.repository.AdminNotificationsRepository;
 import com.cqs.repository.AdminRepository;
 import com.cqs.repository.DesignitionRepository;
 import com.cqs.repository.EmployeeRepository;
+import com.cqs.repository.NotificationRepository;
 import com.cqs.repository.PriorityRepository;
 import com.cqs.repository.ProjectRepository;
 import com.cqs.repository.RolesRepository;
@@ -60,6 +65,8 @@ public class AdminServiceImpl implements AdminService {
 	private final JWTTokenUtil jwtToken;
 	private final GenerateOtp generateOtp; 
 	private final OtpMailSender otpMailSender;
+	private final NotificationRepository notificationRepository;
+	private final AdminNotificationsRepository adminNotificationsRepository;
 	
 	@Override
 	public Response<LoginResponse> adminLogin(AdminLoginRequest request) {
@@ -248,6 +255,13 @@ public class AdminServiceImpl implements AdminService {
 		taskRepository.save(task);
 		projectRepository.save(project.get());
 		employeeRepository.save(employee.get());
+		Notifications notification = new Notifications();
+		notification.setToId(employee.get().getId());
+		notification.setCreatedAt(new Date());
+		notification.setTitle(Constants.TASK_ASSIGN);
+		notification.setMessage("a new task " + "\"" + request.getTitle() + "\"" + " assigned to you.");
+		notification.setType(Constants.NOTI_TYPE_ASSIGNED);
+		notificationRepository.save(notification);
 		return new Response<>(HttpStatus.SC_OK,"Success");
 	}
 
@@ -271,15 +285,41 @@ public class AdminServiceImpl implements AdminService {
 			}
 			task.get().getAssignee().setActiveTasks(task.get().getAssignee().getActiveTasks()-1);
 			employeeRepository.save(task.get().getAssignee());
+			Notifications notification = new Notifications();
+			notification.setToId(task.get().getAssignee().getId());
+			notification.setType(Constants.NOTI_TYPE_MIGRATED);
+			notification.setTitle(Constants.TASK_MIGRATED);
+			notification.setMessage("TaskId: " + task.get().getId() + " Migreated from you by Admin.");
+			notification.setCreatedAt(new Date());
+			notificationRepository.save(notification);
 			employee.get().setActiveTasks(employee.get().getActiveTasks()+1);
 			task.get().setAssignee(employee.get());
 			employeeRepository.save(employee.get());
+			Notifications notification2 = new Notifications();
+			notification2.setToId(employee.get().getId());
+			notification2.setType(Constants.NOTI_TYPE_ASSIGNED);
+			notification2.setTitle(Constants.TASK_ASSIGN);
+			notification2.setMessage("a new task " + "\"" + task.get().getTitle() + "\"" + " assigned to you.");
+			notification2.setCreatedAt(new Date());
+			notificationRepository.save(notification2);
+		}else {
+			Notifications notification = new Notifications();
+			notification.setToId(task.get().getAssignee().getId());
+			notification.setType(Constants.NOTI_TYPE_UPDATE);
+			notification.setTitle(Constants.TASK_UPDATED);
+			notification.setMessage("TaskId : " + task.get().getId() + " is updated by Admin " + " , Status : " + request.getStatus());
+			notification.setCreatedAt(new Date());
+			notificationRepository.save(notification);
 		}
 		Optional<Priority> priority = priorityRepository.findByCode(request.getPriority());
 		task.get().setPriority(priority.get());
 		task.get().setStatus(request.getStatus());
+		if(request.getStatus().equals(Constants.COMPLETED)) {
+			task.get().setActualCompletion(new Date());
+		}
 		task.get().setExpectedCompletionDate(request.getExpectedDate());
 		task.get().setRemarks(request.getRemarks());
+		task.get().setUpdatedBy(adminId);
 		taskRepository.save(task.get());
 		return new Response<>(HttpStatus.SC_OK,"Success");
 	}
@@ -370,6 +410,13 @@ public class AdminServiceImpl implements AdminService {
 		project.get().setActiveTasks(project.get().getActiveTasks()-1);
 		employeeRepository.save(emp.get());
 		projectRepository.save(project.get());
+		Notifications noti = new Notifications();
+		noti.setToId(task.get().getAssignee().getId());
+		noti.setType(Constants.NOTI_TYPE_CLOSED);
+		noti.setTitle(Constants.TASK_CLOSED);
+		noti.setMessage("TaskId: " + task.get().getId() + " is Closed by Admin.");
+		noti.setCreatedAt(new Date());
+		notificationRepository.save(noti);
 		taskRepository.delete(task.get());
 		return new Response<>(HttpStatus.SC_OK,"Success");
 	}
@@ -507,6 +554,39 @@ public class AdminServiceImpl implements AdminService {
 		}
 		employeeRepository.delete(employee.get());
 		return new Response<>(HttpStatus.SC_OK,"Deleted Successfully!!");
+	}
+
+	@Override
+	public Response<List<AdminNotifications>> getAllNotifications(String adminId) {
+		Optional<Admin> admin = adminRepository.findById(adminId);
+		if(admin.isEmpty()) {
+			return new Response<>(HttpStatus.SC_FORBIDDEN,"Unauthorized");
+		}
+		List<AdminNotifications> notificationList = adminNotificationsRepository.adminNotification();
+		notificationList.forEach(n->{
+			 if(n.getType().equals(Constants.NOTI_TYPE_UPDATE)) {
+				String emoji = new String(Character.toChars(0x1F4CC));
+				n.setTitle(emoji + " "+ n.getTitle());
+			}else{
+				String emoji = new String(Character.toChars(0x2705));
+				n.setTitle(emoji + " "+ n.getTitle());
+			}
+		});
+		return new Response<>(HttpStatus.SC_OK,"Success",notificationList);
+	}
+
+	@Override
+	public Response<String> deleteNotificationById(String adminId, String notificationId) {
+		Optional<Admin> admin = adminRepository.findById(adminId);
+		if(admin.isEmpty()) {
+			return new Response<>(HttpStatus.SC_FORBIDDEN,"Unauthorized");
+		}
+		Optional<AdminNotifications> notification = adminNotificationsRepository.findById(notificationId);
+		if(notification.isEmpty()) {
+			return new Response<>(HttpStatus.SC_INTERNAL_SERVER_ERROR,"not found");
+		}
+		adminNotificationsRepository.delete(notification.get());
+		return new Response<>(HttpStatus.SC_OK,"Success");
 	}
 	
 }

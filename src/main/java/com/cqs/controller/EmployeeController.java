@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.hc.core5.http.HttpHeaders;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cqs.entity.Employee;
+import com.cqs.entity.Notifications;
 import com.cqs.entity.Project;
 import com.cqs.entity.Task;
 import com.cqs.requestdto.ChangePasswordRequest;
 import com.cqs.requestdto.EmployeeLogin;
+import com.cqs.requestdto.UpdateTaskByEmployee;
 import com.cqs.responsedto.EmployeeLoginResponse;
 import com.cqs.responsedto.Response;
 import com.cqs.service.EmployeeService;
@@ -63,5 +66,17 @@ public class EmployeeController implements Serializable {
 	@GetMapping("/project-count")
 	Response<Integer> getprojectCount(@RequestHeader(HttpHeaders.AUTHORIZATION) String token){
 		return employeeService.getProjectCount(JWTTokenUtil.getUserIdFromToken(token.substring(7)));
+	}
+	@PutMapping("/task/{taskId}")
+	Response<String> updateTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable("taskId")String taskId,@RequestBody UpdateTaskByEmployee request){
+		return employeeService.updateTaskStatus(JWTTokenUtil.getUserIdFromToken(token.substring(7)),taskId,request);
+	}
+	@GetMapping("/notification")
+	Response<List<Notifications>> getAllNotifications(@RequestHeader(HttpHeaders.AUTHORIZATION) String token){
+		return employeeService.getAllNotification(JWTTokenUtil.getUserIdFromToken(token.substring(7)));
+	}
+	@DeleteMapping("/notification/{NotificationId}")
+	Response<String> getAllNotifications(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable("NotificationId")String notificationId){
+		return employeeService.deleteNotificationById(JWTTokenUtil.getUserIdFromToken(token.substring(7)),notificationId);
 	}
 }

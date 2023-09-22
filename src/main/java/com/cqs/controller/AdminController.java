@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cqs.entity.AdminNotifications;
 import com.cqs.entity.Employee;
 import com.cqs.entity.Project;
 import com.cqs.entity.Task;
@@ -133,5 +134,13 @@ public class AdminController implements Serializable {
     @GetMapping("/CountTask/{Status}")
     Response<Integer> countTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable("Status")String status){
     	return adminService.countTaskByStatus(JWTTokenUtil.getUserIdFromToken(token.substring(7)),status);
+    }
+    @GetMapping("/notification")
+    Response<List<AdminNotifications>> getNotifications(@RequestHeader(HttpHeaders.AUTHORIZATION) String token){
+    	return adminService.getAllNotifications(JWTTokenUtil.getUserIdFromToken(token.substring(7)));
+    }
+    @DeleteMapping("/notification/{NotificationId}")
+    Response<String> deleteNotification(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable("NotificationId") String notificationId){
+    	return adminService.deleteNotificationById(JWTTokenUtil.getUserIdFromToken(token.substring(7)),notificationId);
     }
 }

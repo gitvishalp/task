@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import com.cqs.entity.AdminNotifications;
 import com.cqs.entity.Employee;
 import com.cqs.entity.Project;
 import com.cqs.entity.Task;
@@ -42,5 +43,7 @@ public interface AdminService extends Serializable {
 	Response<List<Task>> getAllTasksByEmployeeId(String adminId,String employeeId);
 	Response<Integer> countProjectByStatus(String adminId, String Status);  
 	Response<Integer> countTaskByStatus(String adminId, String Status);
-	Response<String> deleteEmployee(String adminId, String empId); 
+	Response<String> deleteEmployee(String adminId, String empId);
+	Response<List<AdminNotifications>> getAllNotifications(String adminId);
+	Response<String> deleteNotificationById(String adminId, String notificationId);
 }

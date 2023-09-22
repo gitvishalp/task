@@ -45,6 +45,7 @@ public class Task implements Serializable {
 	private Date actualCompletion;
 	private String remarks;
 	private String createdby;
+	private String updatedBy;
 	
 	public Task(String id, String title, String description, Priority priority, Employee assignee, String status,
 			boolean active, Date createdAt, Date expectedCompletionDate, String createdby) {
