@@ -132,7 +132,7 @@ public class AdminServiceImpl implements AdminService {
 		emp.setFirstLogin(true);
 		employeeRepository.save(emp);
 		System.out.println(tempPass);
-		//otpMailSender.sendInviteMail(request.getEmail(),request.getName(),tempPass,role.get().getName());
+		otpMailSender.sendInviteMail(request.getEmail(),request.getName(),tempPass,role.get().getName());
 		return new Response<>(HttpStatus.SC_OK,"Success");
 	}
 
@@ -217,7 +217,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Response<String> addTask(String adminId, AddTaskRequest request) {
+	public Response<String> addTask(String adminId, AddTaskRequest request)throws UnsupportedEncodingException, MessagingException {
 		Optional<Admin> admin = adminRepository.findById(adminId);
 		if(admin.isEmpty()) {
 			return new Response<>(HttpStatus.SC_FORBIDDEN,"Unauthorized");
@@ -262,11 +262,14 @@ public class AdminServiceImpl implements AdminService {
 		notification.setMessage("a new task " + "\"" + request.getTitle() + "\"" + " assigned to you.");
 		notification.setType(Constants.NOTI_TYPE_ASSIGNED);
 		notificationRepository.save(notification);
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+	    String compDate= formatter.format(request.getExpectedDate());  
+		otpMailSender.sendTaskMail(employee.get().getEmail(),employee.get().getName(), request.getTitle(), project.get().getProjectName(), compDate);
 		return new Response<>(HttpStatus.SC_OK,"Success");
 	}
 
 	@Override
-	public Response<String> updateTask(String adminId, String taskId, UpdateTaskRequest request) {
+	public Response<String> updateTask(String adminId, String taskId, UpdateTaskRequest request)throws UnsupportedEncodingException, MessagingException {
 		Optional<Admin> admin = adminRepository.findById(adminId);
 		if(admin.isEmpty()) {
 			return new Response<>(HttpStatus.SC_FORBIDDEN,"Unauthorized");
@@ -295,6 +298,9 @@ public class AdminServiceImpl implements AdminService {
 			employee.get().setActiveTasks(employee.get().getActiveTasks()+1);
 			task.get().setAssignee(employee.get());
 			employeeRepository.save(employee.get());
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+		    String compDate= formatter.format(request.getExpectedDate());  
+			otpMailSender.sendTaskMail(employee.get().getEmail(), employee.get().getName(), task.get().getTitle(), task.get().getProject().getProjectName(),compDate);
 			Notifications notification2 = new Notifications();
 			notification2.setToId(employee.get().getId());
 			notification2.setType(Constants.NOTI_TYPE_ASSIGNED);

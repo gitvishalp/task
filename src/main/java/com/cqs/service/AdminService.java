@@ -27,8 +27,8 @@ public interface AdminService extends Serializable {
 	Response<String> addDesignition(String adminId, AddDesignationRequest request);
 	Response<String> addEmployee(String adminId,AddEmployeeRequest request) throws UnsupportedEncodingException, MessagingException;
 	Response<String> addProject(String adminId, AddProjectRequest request);
-	Response<String> addTask(String adminId, AddTaskRequest request);
-	Response<String> updateTask(String adminId,String taskId, UpdateTaskRequest request);
+	Response<String> addTask(String adminId, AddTaskRequest request)throws UnsupportedEncodingException, MessagingException;
+	Response<String> updateTask(String adminId,String taskId, UpdateTaskRequest request)throws UnsupportedEncodingException, MessagingException;
 	Response<String> deleteProject(String adminId,String projectId);
 	Response<String> deleteTaskByProjectId(String adminId, String projectId);
 	Response<String> deleteTaskByEmployeeId(String adminId, String employeeId);

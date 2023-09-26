@@ -45,35 +45,27 @@ public class OtpMailSender implements Serializable {
 		}
 	}
 	
-	
-	public String sendTaskMail(String senderEmail, String code) throws UnsupportedEncodingException, MessagingException {
+	public String sendTaskMail(String senderEmail,String empName, String title, String projectName, String date) throws UnsupportedEncodingException, MessagingException {
 		try {
+			String redirectUrl = "http://localhost:4200/login";
 			MimeMessage message = mailSender.createMimeMessage();           
 		    MimeMessageHelper helper = new MimeMessageHelper(message);
-		    helper.setFrom("noreply@likebook");
+		    helper.setFrom("noreply@cqs.in");
 		    helper.setTo(senderEmail);
-		     
-		    String subject = "LikeBook- ForgetPassword Code";
-		     
-		    String content = "<p>Hello " + senderEmail + "</p>"
-		            + "<p> Sorry to see that you are facing problem to get into your account."
-		            + "<br>Your Temporary Password is:</p>"
-		            + "<p><b> " + "<font face=\"Verdana\" size =\"5\" >" + code + "</font></b></p>"
-		            + "<p><b> Use this code to login </b></p>" 
-		            + "<p><font color=\"red\"> this code is valid only for first login. </font></p>"
+		    String subject = "New Task Assigned - CQS task workbench";
+		    String content = "<p>Hi " + empName + "</p>"
+		            + "<p>there is a new task titled " + "<b>" + title +"</b> in " + projectName + " is assigned to you.</p>" 
+		            + "<br><p> deadline to this task is : " + date
+		    		+ "<br><p>to see more details and actions follow through the link</p>"
+		            + "<br>" + redirectUrl 
 		            + "<br>"
-		            + "<b>Team LikeBook<b>";
+		            + "<b>Team CQS<b>";
 		    helper.setSubject(subject);
 		    helper.setText(content, true);
 		    mailSender.send(message); 
-			return "Code send to registered Email!! ";
+			return "Invite Sent";
 		}catch(Exception ex) {
 			return ex.toString();
 		}
-		
 	}
-	
-	
-	
-	
 }

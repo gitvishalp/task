@@ -68,11 +68,11 @@ public class AdminController implements Serializable {
 		return adminService.addProject(JWTTokenUtil.getUserIdFromToken(token.substring(7)), request);
 	}
     @PostMapping("/AddTask")
-    Response<String> addTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@Valid @RequestBody AddTaskRequest request){
+    Response<String> addTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@Valid @RequestBody AddTaskRequest request)throws UnsupportedEncodingException, MessagingException{
 		return adminService.addTask(JWTTokenUtil.getUserIdFromToken(token.substring(7)), request);
 	}
     @PutMapping("/UpdateTask/{TaskId}")
-    Response<String> updateTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable("TaskId")String taskId,@Valid @RequestBody UpdateTaskRequest request){
+    Response<String> updateTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable("TaskId")String taskId,@Valid @RequestBody UpdateTaskRequest request)throws UnsupportedEncodingException, MessagingException{
 		return adminService.updateTask(JWTTokenUtil.getUserIdFromToken(token.substring(7)),taskId, request);
 	}
     @DeleteMapping("/Project/{ProjectId}")
