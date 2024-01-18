@@ -73,6 +73,7 @@ public class AdminServiceImpl implements AdminService {
 		Optional<Admin> admin =null;
 		if(StringUtils.hasText(request.getEmail())) {
 			admin = adminRepository.findByEmail(request.getEmail());
+			System.out.println("vishal");
 		}else if(StringUtils.hasText(request.getUserName())) {
 			admin = adminRepository.findByUserName(request.getUserName());
 		}else {
